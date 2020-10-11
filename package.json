@@ -7,7 +7,7 @@
     "start": "./node_modules/.bin/ts-node ./src"
   },
   "keywords": [],
-  "author": "",
+  "author": "hoshiyuki_tamako",
   "license": "MIT",
   "dependencies": {
     "async": "^3.2.0",
