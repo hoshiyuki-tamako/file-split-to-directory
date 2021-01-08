@@ -9,7 +9,7 @@ export class FileSplitToDirectory {
 
   public static async cli(directory?: string, count?: number): Promise<void> {
     try {
-      await new this().run(directory || '.', Number(count));
+      await new FileSplitToDirectory().run(directory || '.', Number(count));
       console.log(chalk.green('Completed'));
     } catch(e) {
       console.error(chalk.red(e.stack));
