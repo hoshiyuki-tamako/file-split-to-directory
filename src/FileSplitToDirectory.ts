@@ -19,7 +19,6 @@ export class FileSplitToDirectory {
 
   public async run(directory: string, chunkSize?: number | null): Promise<void> {
     const size = Math.abs(chunkSize || FileSplitToDirectory.defaultChunkSize);
-    console.log(fs);
 
     const filenames = await filter(await fs.readdir(directory), async (p) => {
       const stat = await fs.lstat(path.join(directory, p));
