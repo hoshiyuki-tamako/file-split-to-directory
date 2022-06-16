@@ -8,12 +8,6 @@ split files to folders
 npm i -g file-split-to-directory
 ```
 
-or
-
-```bash
-npm i file-split-to-directory
-```
-
 ## Notes
 
 It may take very long time from few `minutes` to few `hours` to process all files as moving files are slow.
@@ -29,7 +23,7 @@ Can be use for a work around for `irfanview thumbnail viewer` cannot load large 
 ### Command Line
 
 ```bash
-file-split-to-directory
+file-split-to-directory .
 ```
 
 ```bash
@@ -37,16 +31,18 @@ file-split-to-directory "/mnt/d/download"
 ```
 
 ```bash
-# each folder 1000 files
-file-split-to-directory "/mnt/d/download" 1000
+# each folder 4400 files (default is 4400)
+file-split-to-directory "/mnt/d/download" --chunk 4400
+file-split-to-directory "/mnt/d/download" -c 4400
 ```
 
-```ps
-file-split-to-directory "D:/download"
+```bash
+# async may work faster over network
+file-split-to-directory "/mnt/d/download" --async
 ```
 
-```ps
-file-split-to-directory "D:/download" 1000
+```ps1
+file-split-to-directory "D:/Download" -- -c 4400 --async
 ```
 
 ### Result
@@ -83,11 +79,11 @@ to
 ### Run Directly
 
 ```bash
-# npm start <directory> [size=4400]
-npm start "D:/download"
+# npm start -- <directory> --chunk [chunk=4400] --async
+npm start -- "D:/download"
 
 # with custom size
-npm start "D:/download" 1000
+npm start -- "D:/download" 1000
 ```
 
 ### Api
@@ -96,15 +92,21 @@ npm start "D:/download" 1000
 import { FileSplitToDirectory } from 'file-split-to-directory';
 
 (async () => {
-  // command line
-  await FileSplitToDirectory.cli('D:/download');
-
   const fileSplitToDirectory = new FileSplitToDirectory();
   try {
-    // same as await fileSplitToDirectory.run('D:/download', FileSplitToDirectory.defaultChunkSize);
-    await fileSplitToDirectory.run('D:/download');
+    await fileSplitToDirectory.run('D:/download', 4400);
   } catch (e) {
     // handle file system error
   }
 })();
+```
+
+```ts
+import { FileSplitToDirectory } from 'file-split-to-directory';
+
+try {
+  new FileSplitToDirectory().runSync('D:/download');
+} catch (e) {
+  // handle file system error
+}
 ```
