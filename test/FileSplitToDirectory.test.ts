@@ -9,11 +9,14 @@ import { CreateTmpFileBase } from './base/CreateTmpFileBase';
 export class FileSplitToDirectoryTest extends CreateTmpFileBase {
   @test()
   public async cli() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
     FileSplitToDirectory.defaultOptions.chunk = this.chunk;
     await FileSplitToDirectory.cli(this.testDirectory);
     this.checkDirectorySuccess();
-  }
 
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
+  }
 
   @test()
   public async cliDirectoryEmptyString() {
@@ -131,9 +134,13 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
 
   @test()
   public async runDefault() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
     FileSplitToDirectory.defaultOptions.chunk = this.chunk;
     await new FileSplitToDirectory().run(this.testDirectory);
     this.checkDirectorySuccess();
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
   }
 
   @test()
@@ -144,8 +151,12 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
 
   @test()
   public runSyncDefault() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
     FileSplitToDirectory.defaultOptions.chunk = this.chunk;
     new FileSplitToDirectory().runSync(this.testDirectory);
     this.checkDirectorySuccess();
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
   }
 }

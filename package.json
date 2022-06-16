@@ -1,6 +1,6 @@
 {
   "name": "file-split-to-directory",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "split files to directory",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -33,6 +33,7 @@
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@testdeck/mocha": "^0.2.0",
     "@types/async": "^3.2.13",
     "@types/chai": "^4.3.1",
