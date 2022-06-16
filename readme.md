@@ -42,7 +42,7 @@ file-split-to-directory "/mnt/d/download" --async
 ```
 
 ```ps1
-file-split-to-directory "D:/Download" -- -c 4400 --async
+file-split-to-directory "D:/Download" -c 4400 --async
 ```
 
 ### Result
@@ -64,15 +64,15 @@ to
 
 ```text
 - Download
-|- 1
+|- 0
 ||- 1.png
 ||- 2.png
 ||- 3.png
 ||- ...
-|- 2
+|- 1
 ||- 4401.png
 ||- ...
-|- 3
+|- 2
 ||- 8801.png
 ```
 
@@ -83,7 +83,7 @@ to
 npm start -- "D:/download"
 
 # with custom size
-npm start -- "D:/download" 1000
+npm start -- "D:/download" --chunk 4400 --async
 ```
 
 ### Api
