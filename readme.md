@@ -1,5 +1,8 @@
 # File Split To Directory
 
+![npm publish](https://github.com/hoshiyuki-tamako/file-split-to-directory/workflows/npm%20publish/badge.svg)
+![nycrc config on GitHub](https://img.shields.io/nycrc/hoshiyuki-tamako/file-split-to-directory?preferredThreshold=branches)
+
 split files to folders
 
 ## Install
