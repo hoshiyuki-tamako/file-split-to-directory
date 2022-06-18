@@ -1,5 +1,5 @@
 import { filter } from 'async';
-import chalk from 'chalk';
+import clc from 'cli-color';
 import fs from 'fs-extra';
 import { chunk } from 'lodash';
 import path from 'path';
@@ -35,7 +35,15 @@ export class FileSplitToDirectory {
     // validate
     if (!directory) {
       if (options.verbose) {
-        console.error(chalk.red(`directory cannot be empty: ${options.chunk}`));
+        console.error(clc.red(`directory cannot be empty: ${directory}`));
+      }
+      process.exitCode = FileSplitToDirectoryExitCode.InvalidArgument;
+      return;
+    }
+
+    if (!Number.isFinite(options.chunk)) {
+      if (options.verbose) {
+        console.error(clc.red(`chunk invalid: ${options.chunk}`));
       }
       process.exitCode = FileSplitToDirectoryExitCode.InvalidArgument;
       return;
@@ -43,7 +51,7 @@ export class FileSplitToDirectory {
 
     if (options.chunk <= 0) {
       if (options.verbose) {
-        console.error(chalk.red(`chunk cannot smaller or equal to 0: ${options.chunk}`));
+        console.error(clc.red(`chunk cannot smaller or equal to 0: ${options.chunk}`));
       }
       process.exitCode = FileSplitToDirectoryExitCode.InvalidArgument;
       return;
@@ -59,8 +67,8 @@ export class FileSplitToDirectory {
       }
     } catch (e) {
       if (options.verbose) {
-        console.error(chalk.red((e as Error).message));
-        console.error(chalk.red((e as Error).stack));
+        console.error(clc.red((e as Error).message));
+        console.error(clc.red((e as Error).stack));
       }
       process.exitCode = FileSplitToDirectoryExitCode.Error;
     }
