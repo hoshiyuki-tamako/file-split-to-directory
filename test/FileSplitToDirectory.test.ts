@@ -25,12 +25,18 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
     {
       const options = {... FileSplitToDirectory.defaultOptions, async: true, chunk: this.chunk, verbose: FileSplitToDirectoryVerbose.Error };
       await FileSplitToDirectory.cli('', options);
+      this.checkDirectoryFail();
+      expect(process.exitCode).equal(FileSplitToDirectoryExitCode.InvalidArgument);
+
       process.exitCode = exitCode;
     }
 
     {
       const options = {... FileSplitToDirectory.defaultOptions, async: true, chunk: this.chunk, verbose: FileSplitToDirectoryVerbose.None };
       await FileSplitToDirectory.cli('', options);
+      this.checkDirectoryFail();
+      expect(process.exitCode).equal(FileSplitToDirectoryExitCode.InvalidArgument);
+
       process.exitCode = exitCode;
     }
   }
@@ -44,8 +50,32 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
     expect(files.length).eq(0);
   }
 
+
   @test()
-  public async cliCountZero() {
+  public async cliChunkInvalid() {
+    const exitCode = process.exitCode;
+
+    {
+      const options = {... FileSplitToDirectory.defaultOptions, async: true, chunk: NaN, verbose: FileSplitToDirectoryVerbose.Error };
+      await FileSplitToDirectory.cli(this.testDirectory, options);
+      this.checkDirectoryFail();
+      expect(process.exitCode).equal(FileSplitToDirectoryExitCode.InvalidArgument);
+
+      process.exitCode = exitCode;
+    }
+
+    {
+      const options = {... FileSplitToDirectory.defaultOptions, async: true, chunk: NaN, verbose: FileSplitToDirectoryVerbose.None };
+      await FileSplitToDirectory.cli(this.testDirectory, options);
+      this.checkDirectoryFail();
+      expect(process.exitCode).equal(FileSplitToDirectoryExitCode.InvalidArgument);
+
+      process.exitCode = exitCode;
+    }
+  }
+
+  @test()
+  public async cliChunkZero() {
     const exitCode = process.exitCode;
 
     {
@@ -68,7 +98,7 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
   }
 
   @test()
-  public async cliCountLessThanOne() {
+  public async cliChunkLessThanOne() {
     const exitCode = process.exitCode;
     {
       const options = {... FileSplitToDirectory.defaultOptions, async: true, chunk: -1, verbose: FileSplitToDirectoryVerbose.Error };
