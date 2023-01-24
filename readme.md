@@ -113,3 +113,18 @@ try {
   // handle file system error
 }
 ```
+
+#### Custom compare function
+
+```ts
+import { FileSplitToDirectory } from 'file-split-to-directory';
+
+try {
+  const fstd = new FileSplitToDirectory();
+  // filenames will be sorted using below compare function, the default compare were as shown below
+  fstd.compare = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+  fstd.runSync('D:/download', 100);
+} catch (e) {
+  // handle file system error
+}
+```

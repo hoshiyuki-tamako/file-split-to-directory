@@ -74,11 +74,14 @@ export class FileSplitToDirectory {
     }
   }
 
+  compare = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+
   public runSync(directory: string, chunkSize = FileSplitToDirectory.defaultOptions.chunk) {
     const size = Math.abs(chunkSize);
 
     const filenames = fs.readdirSync(directory)
-      .filter((p) => fs.lstatSync(path.join(directory, p)).isFile());
+      .filter((p) => fs.lstatSync(path.join(directory, p)).isFile())
+      .sort(this.compare);
 
     chunk(filenames, size).forEach((paths, i) => {
       const targetDirectory = path.join(directory, i.toString());
@@ -99,7 +102,7 @@ export class FileSplitToDirectory {
       callback(null, stat.isFile());
     });
 
-    await Promise.all(chunk(filenames, size).map(async (paths, i) => {
+    await Promise.all(chunk(filenames.sort(this.compare), size).map(async (paths, i) => {
       const targetDirectory = path.join(directory, i.toString());
       await fs.mkdir(targetDirectory);
       await Promise.all(paths.map(async (p) => {

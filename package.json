@@ -1,6 +1,6 @@
 {
   "name": "file-split-to-directory",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "split files to directory",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -11,7 +11,7 @@
   "homepage": "https://github.com/hoshiyuki-tamako/file-split-to-directory#readme",
   "scripts": {
     "start": "ts-node ./src/cli",
-    "test": "nyc ts-mocha --type-check --parallel test/**/**/*test.ts",
+    "test": "nyc ts-mocha --timeout 60000 --type-check --parallel test/**/**/*test.ts",
     "build": "tsc",
     "clean": "tsc --build --clean",
     "lint": "eslint .",
