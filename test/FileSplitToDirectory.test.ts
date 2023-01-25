@@ -143,6 +143,13 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
   }
 
   @test()
+  public async cliOutputDirectory() {
+    const options = {... FileSplitToDirectory.defaultOptions, async: false, chunk: this.chunk, verbose: FileSplitToDirectoryVerbose.None, outputDirectory: this.testOutputDirectory };
+    await FileSplitToDirectory.cli(this.testDirectory, options);
+    this.checkDirectorySuccess(undefined, this.testOutputDirectory);
+  }
+
+  @test()
   public async cliAsync() {
     const options = {... FileSplitToDirectory.defaultOptions, async: true, chunk: this.chunk, verbose: FileSplitToDirectoryVerbose.None };
     await FileSplitToDirectory.cli(this.testDirectory, options);
@@ -174,6 +181,48 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
   }
 
   @test()
+  public async runCustomCompare() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
+    FileSplitToDirectory.defaultOptions.chunk = this.chunk;
+    const fstd = new FileSplitToDirectory();
+    fstd.compare = () => 0;
+    await fstd.run(this.testDirectory);
+    this.checkDirectorySuccess(fstd.compare);
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
+  }
+
+  @test()
+  public async runCustomDirectoryNameGenerator() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
+    FileSplitToDirectory.defaultOptions.chunk = this.chunk;
+    const fstd = new FileSplitToDirectory();
+    fstd.directoryNameGenerator = (i) => (i + 10).toString();
+    await fstd.run(this.testDirectory, this.chunk, this.testOutputDirectory);
+    this.checkDirectorySuccess(undefined, this.testOutputDirectory);
+    const folders = fs.readdirSync(this.testOutputDirectory).sort(fstd.compare);
+    for (const [i, folder] of Object.entries(folders)) {
+      expect(folder).eq(fstd.directoryNameGenerator(+i));
+    }
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
+  }
+
+  @test()
+  public async runOutputDirectory() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
+    FileSplitToDirectory.defaultOptions.chunk = this.chunk;
+    const fstd = new FileSplitToDirectory();
+    await fstd.run(this.testDirectory, this.chunk, this.testOutputDirectory);
+    this.checkDirectorySuccess(undefined, this.testOutputDirectory);
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
+  }
+
+  @test()
   public runSync() {
     new FileSplitToDirectory().runSync(this.testDirectory, this.chunk);
     this.checkDirectorySuccess();
@@ -189,4 +238,47 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
 
     FileSplitToDirectory.defaultOptions.chunk = chunk;
   }
+
+  @test()
+  public runSyncCustomCompare() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
+    FileSplitToDirectory.defaultOptions.chunk = this.chunk;
+    const fstd = new FileSplitToDirectory();
+    fstd.compare = () => 0;
+    fstd.runSync(this.testDirectory);
+    this.checkDirectorySuccess(fstd.compare);
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
+  }
+
+  @test()
+  public runSyncCustomDirectoryNameGenerator() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
+    FileSplitToDirectory.defaultOptions.chunk = this.chunk;
+    const fstd = new FileSplitToDirectory();
+    fstd.directoryNameGenerator = (i) => (i + 10).toString();
+    fstd.runSync(this.testDirectory, this.chunk, this.testOutputDirectory);
+    this.checkDirectorySuccess(undefined, this.testOutputDirectory);
+    const folders = fs.readdirSync(this.testOutputDirectory).sort(fstd.compare);
+    for (const [i, folder] of Object.entries(folders)) {
+      expect(folder).eq(fstd.directoryNameGenerator(+i));
+    }
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
+  }
+
+  @test()
+  public runSyncOutputDirectory() {
+    const chunk = FileSplitToDirectory.defaultOptions.chunk;
+
+    FileSplitToDirectory.defaultOptions.chunk = this.chunk;
+    const fstd = new FileSplitToDirectory();
+    fstd.runSync(this.testDirectory, this.chunk, this.testOutputDirectory);
+    this.checkDirectorySuccess(undefined, this.testOutputDirectory);
+
+    FileSplitToDirectory.defaultOptions.chunk = chunk;
+  }
+
 }

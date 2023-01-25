@@ -6,10 +6,16 @@ import path from 'path';
 import sinon from 'sinon';
 import { v4 } from 'uuid';
 
+function randomId() {
+  return Math.random().toString(36).slice(2).toLocaleUpperCase();
+}
+
 export abstract class CreateTmpFileBase {
-  protected chunk = 18;
-  protected fileCount = 300;
+  protected chunk = 16;
+  protected fileCount = 200;
   protected testDirectory = path.join(os.tmpdir(), `FileSplitToDirectoryTest-${v4()}${+new Date()}`);
+  protected testOutputDirectory = path.join(os.tmpdir(), `FileSplitToDirectoryTestOutput-${v4()}${+new Date()}`);
+  protected testOutputDirectoryRecursive = path.join(os.tmpdir(), `FileSplitToDirectoryTestOutput-${randomId}/${randomId}/${randomId}`);
   protected sandbox = sinon.createSandbox();
 
   public before() {
@@ -34,6 +40,7 @@ export abstract class CreateTmpFileBase {
 
   public after() {
     fs.rmSync(this.testDirectory, { recursive: true, force: true });
+    fs.rmSync(this.testOutputDirectory, { recursive: true, force: true });
     sinon.restore();
   }
 
@@ -48,17 +55,18 @@ export abstract class CreateTmpFileBase {
     }
   }
 
-  protected checkDirectorySuccess() {
-    const compare = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+  protected checkDirectorySuccess(compare?: (x: string, y: string) => number, outputDirectory?: string) {
+    const directoryCompare = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+    compare ??= directoryCompare;
+    outputDirectory ||= this.testDirectory;
 
-    const folders = fs.readdirSync(this.testDirectory).sort(compare);
+    const folders = fs.readdirSync(outputDirectory).sort(directoryCompare);
     expect(folders.length).eq(Math.ceil(this.fileCount / this.chunk));
-
 
     const fileNameInOrder = [] as string[];
 
     for (const folder of folders) {
-      const folderPath = path.join(this.testDirectory, folder);
+      const folderPath = path.join(outputDirectory, folder);
       const folderLstat = fs.lstatSync(folderPath);
       expect(folderLstat.isDirectory()).to.be.true;
 
