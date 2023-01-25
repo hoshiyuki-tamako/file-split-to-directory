@@ -8,6 +8,7 @@ export interface FileSplitToDirectoryOption {
   chunk: number;
   async: boolean;
   verbose: number;
+  outputDirectory: string;
 }
 
 export enum FileSplitToDirectoryExitCode {
@@ -19,6 +20,10 @@ export enum FileSplitToDirectoryExitCode {
 export enum FileSplitToDirectoryVerbose {
   None = 0,
   Error = 1,
+}
+
+export interface SplitDirectoryOption {
+  directory: string;
 }
 
 export class FileSplitToDirectory {
@@ -61,9 +66,9 @@ export class FileSplitToDirectory {
     try {
       const fileSplitToDirectory = new FileSplitToDirectory();
       if (options.async) {
-        await fileSplitToDirectory.run(directory, options.chunk);
+        await fileSplitToDirectory.run(directory, options.chunk, options.outputDirectory);
       } else {
-        fileSplitToDirectory.runSync(directory, options.chunk);
+        fileSplitToDirectory.runSync(directory, options.chunk, options.outputDirectory);
       }
     } catch (e) {
       if (options.verbose) {
@@ -77,15 +82,22 @@ export class FileSplitToDirectory {
   compare = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
   directoryNameGenerator = (i: number) => i.toString();
 
-  public runSync(directory: string, chunkSize = FileSplitToDirectory.defaultOptions.chunk) {
+  /**
+   *
+   * @param directory
+   * @param chunkSize
+   * @param outputDirectory if not set or empty string will split to same directory/{number}
+   */
+  public runSync(directory: string, chunkSize = FileSplitToDirectory.defaultOptions.chunk, outputDirectory?: string) {
     const size = Math.abs(chunkSize);
+    outputDirectory ||= directory;
 
     const filenames = fs.readdirSync(directory)
       .filter((p) => fs.lstatSync(path.join(directory, p)).isFile())
       .sort(this.compare);
 
     chunk(filenames, size).forEach((paths, i) => {
-      const targetDirectory = path.join(directory, this.directoryNameGenerator(i));
+      const targetDirectory = path.join(outputDirectory as string, this.directoryNameGenerator(i));
       fs.mkdirSync(targetDirectory);
       paths.forEach((p) => {
         const originalFile = path.join(directory, p);
@@ -95,8 +107,15 @@ export class FileSplitToDirectory {
     });
   }
 
-  public async run(directory: string, chunkSize = FileSplitToDirectory.defaultOptions.chunk): Promise<void> {
+  /**
+   *
+   * @param directory
+   * @param chunkSize
+   * @param outputDirectory if not set or empty string will split to same directory/{number}
+   */
+  public async run(directory: string, chunkSize = FileSplitToDirectory.defaultOptions.chunk, outputDirectory?: string): Promise<void> {
     const size = Math.abs(chunkSize);
+    outputDirectory ||= directory;
 
     const filenames = await filter(await fs.readdir(directory), async (p, callback) => {
       const stat = await fs.lstat(path.join(directory, p));
@@ -104,7 +123,7 @@ export class FileSplitToDirectory {
     });
 
     await Promise.all(chunk(filenames.sort(this.compare), size).map(async (paths, i) => {
-      const targetDirectory = path.join(directory, this.directoryNameGenerator(i));
+      const targetDirectory = path.join(outputDirectory as string, this.directoryNameGenerator(i));
       await fs.mkdir(targetDirectory);
       await Promise.all(paths.map(async (p) => {
         const originalFile = path.join(directory, p);
