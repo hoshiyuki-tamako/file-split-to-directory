@@ -98,7 +98,7 @@ export class FileSplitToDirectory {
 
     chunk(filenames, size).forEach((paths, i) => {
       const targetDirectory = path.join(outputDirectory as string, this.directoryNameGenerator(i));
-      fs.mkdirSync(targetDirectory);
+      fs.mkdirSync(targetDirectory, { recursive: true });
       paths.forEach((p) => {
         const originalFile = path.join(directory, p);
         const targetFile = path.join(targetDirectory, path.basename(p));
@@ -124,7 +124,7 @@ export class FileSplitToDirectory {
 
     await Promise.all(chunk(filenames.sort(this.compare), size).map(async (paths, i) => {
       const targetDirectory = path.join(outputDirectory as string, this.directoryNameGenerator(i));
-      await fs.mkdir(targetDirectory);
+      await fs.mkdir(targetDirectory, { recursive: true });
       await Promise.all(paths.map(async (p) => {
         const originalFile = path.join(directory, p);
         const targetFile = path.join(targetDirectory, path.basename(p));
