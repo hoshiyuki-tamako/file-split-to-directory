@@ -80,7 +80,7 @@ export class FileSplitToDirectory {
   }
 
   compare = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
-  directoryNameGenerator = (i: number) => i.toString();
+  directoryNameGenerator: (i: number) => string | Promise<string> = (i: number) => i.toString();
 
   /**
    *
@@ -97,7 +97,7 @@ export class FileSplitToDirectory {
       .sort(this.compare);
 
     chunk(filenames, size).forEach((paths, i) => {
-      const targetDirectory = path.join(outputDirectory as string, this.directoryNameGenerator(i));
+      const targetDirectory = path.join(outputDirectory as string, (this.directoryNameGenerator as (i: number) => string)(i));
       fs.mkdirSync(targetDirectory, { recursive: true });
       paths.forEach((p) => {
         const originalFile = path.join(directory, p);
@@ -123,7 +123,7 @@ export class FileSplitToDirectory {
     });
 
     await Promise.all(chunk(filenames.sort(this.compare), size).map(async (paths, i) => {
-      const targetDirectory = path.join(outputDirectory as string, this.directoryNameGenerator(i));
+      const targetDirectory = path.join(outputDirectory as string, await this.directoryNameGenerator(i));
       await fs.mkdir(targetDirectory, { recursive: true });
       await Promise.all(paths.map(async (p) => {
         const originalFile = path.join(directory, p);
