@@ -95,9 +95,9 @@ npm start -- "D:/download" --chunk 4400 --async
 import { FileSplitToDirectory } from 'file-split-to-directory';
 
 (async () => {
-  const fileSplitToDirectory = new FileSplitToDirectory();
+  const fstd = new FileSplitToDirectory();
   try {
-    await fileSplitToDirectory.run('D:/download', 4400);
+    await fstd.run('D:/download', 4400);
   } catch (e) {
     // handle file system error
   }
@@ -123,7 +123,39 @@ try {
   const fstd = new FileSplitToDirectory();
   // filenames will be sorted using below compare function, the default compare were as shown below
   fstd.compare = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' }).compare;
+
+  // another example
+  fstd.compare = (x: string, y: string) => Math.random();
+
   fstd.runSync('D:/download', 100);
+} catch (e) {
+  // handle file system error
+}
+```
+
+#### Custom directory name generator
+
+```ts
+import { FileSplitToDirectory } from 'file-split-to-directory';
+
+try {
+  const fstd = new FileSplitToDirectory();
+  // default as below
+  fstd.directoryNameGenerator = (i: number) => i.toString();
+  fstd.runSync('D:/download', 100);
+} catch (e) {
+  // handle file system error
+}
+```
+
+#### Custom output directory
+
+```ts
+import { FileSplitToDirectory } from 'file-split-to-directory';
+
+try {
+  const fstd = new FileSplitToDirectory();
+  fstd.runSync('D:/download', 100, 'E:/processed');
 } catch (e) {
   // handle file system error
 }
