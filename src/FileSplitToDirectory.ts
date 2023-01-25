@@ -8,7 +8,7 @@ export interface FileSplitToDirectoryOption {
   chunk: number;
   async: boolean;
   verbose: number;
-  outputDirectory: string;
+  output: string;
 }
 
 export enum FileSplitToDirectoryExitCode {
@@ -31,6 +31,7 @@ export class FileSplitToDirectory {
     chunk: 4400,
     async: false,
     verbose: FileSplitToDirectoryVerbose.Error,
+    output: "",
   } as FileSplitToDirectoryOption;
 
   public static async cli(directory: string, options = this.defaultOptions): Promise<void> {
@@ -66,9 +67,9 @@ export class FileSplitToDirectory {
     try {
       const fileSplitToDirectory = new FileSplitToDirectory();
       if (options.async) {
-        await fileSplitToDirectory.run(directory, options.chunk, options.outputDirectory);
+        await fileSplitToDirectory.run(directory, options.chunk, options.output);
       } else {
-        fileSplitToDirectory.runSync(directory, options.chunk, options.outputDirectory);
+        fileSplitToDirectory.runSync(directory, options.chunk, options.output);
       }
     } catch (e) {
       if (options.verbose) {

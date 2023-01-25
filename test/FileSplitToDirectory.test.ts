@@ -144,7 +144,7 @@ export class FileSplitToDirectoryTest extends CreateTmpFileBase {
 
   @test()
   public async cliOutputDirectory() {
-    const options = {... FileSplitToDirectory.defaultOptions, async: false, chunk: this.chunk, verbose: FileSplitToDirectoryVerbose.None, outputDirectory: this.testOutputDirectory };
+    const options = {... FileSplitToDirectory.defaultOptions, async: false, chunk: this.chunk, verbose: FileSplitToDirectoryVerbose.None, output: this.testOutputDirectory };
     await FileSplitToDirectory.cli(this.testDirectory, options);
     this.checkDirectorySuccess(undefined, this.testOutputDirectory);
   }
